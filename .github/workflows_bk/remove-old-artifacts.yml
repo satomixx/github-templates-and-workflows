@@ -1,0 +1,22 @@
+# # ref: https://docs.github.com/ja/actions/reference/events-that-trigger-workflows#scheduled-events
+
+# name: Remove old artifacts
+
+# on:
+#   schedule:
+#     # 0 a.m. once per 2 days
+#     - cron: '0 15 */2 * *'
+
+# jobs:
+#   remove-old-artifacts:
+#     runs-on: ubuntu-latest
+#     # timeout-minutes: 10
+
+#     steps:
+#     - name: Remove old artifacts
+#       uses: c-hive/gha-remove-artifacts@v1
+#       with:
+#         age: '1 day'
+#         skip-recent: 2
+#         # Optional inputs
+#         # skip-tags: true

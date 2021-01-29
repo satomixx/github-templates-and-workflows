@@ -1,0 +1,60 @@
+# # https://docs.github.com/ja/actions/reference/workflow-syntax-for-github-actions
+# # https://docs.github.com/ja/actions/reference/context-and-expression-syntax-for-github-actions
+
+# name: Build and Distribution
+# on:
+#   # pull_request:
+#   #   types: [closed]
+#   #   branches:
+#   #     - master
+#   push:
+#     branches:
+#       - adhoc/android**
+#       - adhoc/developer**
+#       - adhoc/v*/android**
+#       - adhoc/v*/developer
+#       - adhoc/v*/all
+#     tags:
+#       - v*
+
+# jobs:
+#   android-build-and-distribution:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v1
+#       - uses: actions/setup-java@v1
+#         with:
+#           java-version: "12.x"
+#       - uses: subosito/flutter-action@v1
+#         with:
+#           flutter-version: "1.22.0"
+#           channel: "stable"
+#       - run: flutter pub get
+#       # - run: flutter test
+#       - name: Build
+#         run: |
+#           mkdir $HOME/secrets
+#           gpg --quiet --batch --yes --decrypt --passphrase="$SECRET_PASSPHRASE" \
+#           --output $HOME/secrets/secrets.tar secrets.tar.gpg
+#           tar xvf $HOME/secrets/secrets.tar
+#           flutter build apk --dart-define=APP_NAME=umico --dart-define=APP_ENV=prd
+#         env:
+#           SECRET_PASSPHRASE: ${{ secrets.SECRET_PASSPHRASE }}
+
+#       # Upload generated apk to the artifacts.
+#       - name: Upload artifact
+#         uses: actions/upload-artifact@master
+#         with:
+#           name: apk-release
+#           path: build/app/outputs/apk/release/app-release.apk
+
+#       # Upload generated apk to Firebase App Distribution
+#       - if: contains(github.ref, 'developer')
+#         name: Deploy to Developer group by Firebase App Distribution
+#         uses: wzieba/Firebase-Distribution-Github-Action@v1.2.2
+#         with:
+#           appId: ${{secrets.FIREBASE_APP_ID_ANDROID}}
+#           token: ${{secrets.FIREBASE_TOKEN}}
+#           file: build/app/outputs/apk/release/app-release.apk
+#           groups: Developer
+#           releaseNotesFile: releaseNote.md
